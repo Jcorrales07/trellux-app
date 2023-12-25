@@ -6,13 +6,14 @@
 
 import {
     Box,
-    Button,
     Flex,
+    Input,
+    Button,
+    useToast,
     FormLabel,
+    InputGroup,
     FormControl,
     FormErrorMessage,
-    Input,
-    InputGroup,
     InputRightElement,
 } from '@chakra-ui/react'
 import {useState} from "react";
@@ -23,12 +24,13 @@ function LoginForm() {
     const [password, setPassword] = useState('')
     const [showPassword, setShowPassword] = useState(false)
 
+    const toast = useToast()
+
     const handleUsername = e => setUsername(e.target.value)
     const handlePassword = e => setPassword(e.target.value)
     const handleClickSP = () => setShowPassword(prev => !prev)
 
     const getData = () => {
-
         if (username === '' && password === '') return
 
         return {
@@ -38,14 +40,38 @@ function LoginForm() {
     }
 
     //Pero ahora con la info de la db
-    const confirmPassword = () => true
 
-    const redirectDashboard = (e) => {
+    const redirectDashboard = async (e) => {
         e.preventDefault()
 
-        if (confirmPassword())
-            console.log(getData())
-        // Ponerle la salt y mandar a la db
+        let url = 'http://localhost:7777/v1/users/login'
+        let options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(getData())
+        }
+        let res = await fetch(url, options).then(res => res.json()).then(response => response)
+
+        if (!res.success) {
+            //notificar que algo esta mal
+            toast({
+                title: 'Check your credentials',
+                description: res.message,
+                status: 'error',
+                isClosable: true
+            })
+            return
+        }
+
+        toast({
+            title: 'Login successfully!',
+            description: res.message,
+            status: 'success',
+            isClosable: true
+        })
+        //redirigir al dashboard y decirle que todo bien
     }
 
     let validInput = input => input === ''

@@ -1,9 +1,13 @@
 import Homepage from './Homepage'
 import RegisterPage from "./RegisterPage.jsx";
 import LoginPage from './LoginPage.jsx'
+import DashboardPage from "./DashboardPage.jsx";
+import ErrorPage from "./ErrorPage.jsx";
 
 export {
     Homepage,
     RegisterPage,
-    LoginPage
+    LoginPage,
+    DashboardPage,
+    ErrorPage
 }

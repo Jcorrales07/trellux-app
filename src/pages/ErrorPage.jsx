@@ -1,16 +1,15 @@
-import { useRouteError } from "react-router-dom";
-
-export default function ErrorPage() {
-    const error = useRouteError();
-    console.error(error);
+import {Flex, Heading, Text} from "@chakra-ui/react";
+function ErrorPage() {
 
     return (
-        <div id="error-page">
-            <h1>Oops!</h1>
-            <p>Sorry, an unexpected error has occurred.</p>
-            <p>
-                <i>{error.statusText || error.message}</i>
-            </p>
-        </div>
+        <Flex flexDirection={'column'} minHeight={'100vh'} alignItems={'center'} justifyContent={'center'}>
+            <Heading>404</Heading>
+
+            {/* eslint-disable-next-line react/no-unescaped-entities */}
+            <Text>Sorry, what you are looking for doesn't exists</Text>
+            <Text>Check the path: {document.location.pathname}</Text>
+        </Flex>
     );
 }
+
+export default ErrorPage;

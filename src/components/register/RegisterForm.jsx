@@ -1,4 +1,14 @@
-import {Box, Button, Flex, FormControl, FormLabel, Input, InputGroup, InputRightElement,} from '@chakra-ui/react'
+import {
+    Box,
+    Button,
+    Flex,
+    FormControl,
+    FormLabel,
+    Input,
+    InputGroup,
+    InputRightElement,
+    useToast,
+} from '@chakra-ui/react'
 import {useState} from "react";
 import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 
@@ -11,6 +21,8 @@ function RegisterForm() {
     const [conPassword, setConPassword] = useState('')
 
     const [showPassword, setShowPassword] = useState(false)
+    const toast = useToast()
+
     const handleClickSP = () => setShowPassword(prev => !prev)
 
     const handleName = e => setName(e.target.value)
@@ -33,12 +45,41 @@ function RegisterForm() {
 
     const confirmPassword = () => conPassword.includes(password)
 
-    const registerAccount = (e) => {
+
+    const registerAccount = async (e) => {
         e.preventDefault()
 
-        if (confirmPassword())
-            console.log(getData())
-        // Ponerle la salt y mandar a la db
+        let url = 'http://localhost:7777/v1/users/register'
+        let options = {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(getData())
+        }
+
+        if (confirmPassword()) {
+            let res = await fetch(url, options).then(res => res.json()).then(response => response)
+
+            if (!res.success) {
+                //notificar que algo esta mal
+                toast({
+                    title: 'Your email or username is taken',
+                    description: res.message,
+                    status: 'error',
+                    isClosable: true
+                })
+                return
+            }
+
+            toast({
+                title: 'Your account has been registered!',
+                description: res.message,
+                status: 'success',
+                isClosable: true
+            })
+            // notificar que se registro, mandarlo al dashboard
+        }
     }
 
     return (
@@ -116,7 +157,7 @@ function RegisterForm() {
                         </Box>
 
                     </Flex>
-                    <Button type={'submit'}>Register my account</Button>
+                    <Button type={'submit'}> Register my account</Button>
                 </Flex>
             </form>
         </Flex>
