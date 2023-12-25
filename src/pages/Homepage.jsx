@@ -1,6 +1,5 @@
-import React from 'react'
 import {Navbar, TechSection} from '../components/homepage'
-import { Grid, GridItem, Text } from '@chakra-ui/react'
+import { Grid, GridItem } from '@chakra-ui/react'
 
 function Homepage() {
     return (

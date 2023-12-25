@@ -20,7 +20,7 @@ function TechSection() {
                 Trellux
             </Text>
 
-            <Flex m={'auto'} gap={3} alignItems={'center'}>
+            <Flex m={'auto'} gap={3} alignItems={'center'} flexWrap={'wrap'}>
                 <Image src={javascriptIcon} alt="js logo" width={10} />
                 <Image src={reactIcon} alt="react logo" width={10} />
                 <Image src={viteIcon} alt="vite logo" width={10} />

@@ -1,11 +1,10 @@
-import React from 'react'
 import { tailwindcssIcon } from '../../assets/icons'
 import { Box, Flex, Link, Image } from '@chakra-ui/react'
 
 const navlinks = [
-    { name: 'Login', href: '#' },
-    { name: 'Register', href: '#' },
-    { name: 'Proyect Info', href: '#' },
+    { name: 'Login', href: '/login' },
+    { name: 'Register', href: '/register' },
+    { name: 'Project Info', href: '/projec-info' },
 ]
 
 function Navbar() {
@@ -14,7 +13,9 @@ function Navbar() {
             <Flex justify="space-between" align="center">
                 <Link href="#" fontSize="xl">
                     <Box>
-                        <Image src={tailwindcssIcon} width={50}></Image>
+                        <Link href={'/'}>
+                            <Image src={tailwindcssIcon} width={50}></Image>
+                        </Link>
                     </Box>
                 </Link>
                 <Flex gap={3}>
