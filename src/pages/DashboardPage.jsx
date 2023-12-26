@@ -1,8 +1,13 @@
 import {Grid, GridItem} from "@chakra-ui/react";
 import {Navbar, Sidebar, BoardGrid} from "../components/dashboard/";
+// import {useContext} from "react";
+// import {GlobalState} from "../Store.jsx";
+// import {useLocalStorage} from "../hooks/useLocalStorage.jsx";
 
 
 function DashboardPage() {
+    // const [globalState, setGlobalState] = useContext(GlobalState)
+
     return (
         <Grid
             templateAreas={{

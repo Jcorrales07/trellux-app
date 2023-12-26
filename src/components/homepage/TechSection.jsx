@@ -1,6 +1,5 @@
-import React from 'react'
 import '../../css/homepage.css'
-import { Box, Text, Image, Flex } from '@chakra-ui/react'
+import { Text, Image, Flex } from '@chakra-ui/react'
 import {
     javascriptIcon,
     reactIcon,
