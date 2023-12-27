@@ -6,15 +6,15 @@
 
 import {
     Box,
-    Flex,
-    Input,
     Button,
-    useToast,
-    FormLabel,
-    InputGroup,
+    Flex,
     FormControl,
     FormErrorMessage,
+    FormLabel,
+    Input,
+    InputGroup,
     InputRightElement,
+    useToast,
 } from '@chakra-ui/react'
 import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 
@@ -66,6 +66,36 @@ function LoginForm() {
         }
 
         let res = await fetch(url, options).then(res => res.json()).then(response => response).catch(e => console.log(e))
+        const user = {
+            ...res.user
+        }
+
+        let urlBoards = `http://localhost:7777/v1/boards/${user.username}`
+        let optionsBoards = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+
+        let boardsDB = (await fetch(urlBoards, optionsBoards).then(res => res.json()).then(response => response).catch(e => console.log(e))).boards
+        console.log(boardsDB)
+
+        // ese array lo tengo que destructurar y guardarlo aca
+        let boardsObj = {}
+
+        for (let i = 0; i < boardsDB.length; i++) {
+            let item = boardsDB[i];
+            boardsObj[item.id] = {
+                "id": item.id,
+                "title": item.title,
+                "username": item.username,
+                "date": item.createdAt
+            };
+        }
+
+        // y poner solo los ids aca
+        let boardsArr = boardsDB.map(board => board.id)
 
         if (!res.success) {
             //notificar que algo esta mal
@@ -78,11 +108,7 @@ function LoginForm() {
             return
         }
 
-        const user = {
-            ...res.user
-        }
-
-        // console.log('user', user)
+        console.log('user', user)
         // console.log('globalState antes', globalState)
 
         const newGlobalState = {
@@ -93,11 +119,15 @@ function LoginForm() {
                 username: user.username,
                 email: user.email,
                 accessToken: user.accessToken,
-                boardsOrder: user.boardsOrder,
+                boardsOrder: [...boardsArr],
             },
             userBoards: {
-                boardsOrder: [...user.boardsOrder],
-                boardSelected: {},
+                ...globalState.userBoards,
+                boards: {
+                    ...globalState.userBoards.boards,
+                    ...boardsObj,
+                },
+                boardsOrder: [...boardsArr],
             }
         }
 

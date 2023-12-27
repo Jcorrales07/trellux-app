@@ -1,12 +1,15 @@
 import {Grid, GridItem} from "@chakra-ui/react";
 import {Navbar, Sidebar, BoardGrid} from "../components/dashboard/";
-// import {useContext} from "react";
-// import {GlobalState} from "../Store.jsx";
-// import {useLocalStorage} from "../hooks/useLocalStorage.jsx";
+import {useContext} from "react";
+import {GlobalState} from "../Store.jsx";
+import {useLocalStorage} from "../hooks/useLocalStorage.jsx";
 
 
 function DashboardPage() {
-    // const [globalState, setGlobalState] = useContext(GlobalState)
+    // eslint-disable-next-line no-unused-vars
+    const [globalState, setGlobalState] = useContext(GlobalState)
+    // eslint-disable-next-line no-unused-vars
+    const [state, setState] = useLocalStorage('globalState')
 
     return (
         <Grid
@@ -22,6 +25,12 @@ function DashboardPage() {
             h={'100vh'}
             gridTemplateRows={{base: `65px min-content 82.9vh`, sm: '65px'}}
             gridTemplateColumns={{md: '300px auto', sm: '250px auto'}}
+
+            // Cuando este componente se renderice, ocupo que el estado se establezca
+            // con la info del usuario que aca de entrar
+            onLoad={() => {
+                setGlobalState(state)
+            }}
         >
             <GridItem bg={'brand.500'} area={'navbar'} display={'flex'} alignItems={'center'}>
                 <Navbar/>
@@ -29,7 +38,7 @@ function DashboardPage() {
             <GridItem bg={'brand.400'} area={'sidebar'}>
                 <Sidebar/>
             </GridItem>
-            <GridItem bg={'brand.600'} area={'main'} overflowY={'auto'}>
+            <GridItem bg={'brand.600'} area={'main'} overflowY='auto'>
                 <BoardGrid/>
             </GridItem>
         </Grid>
