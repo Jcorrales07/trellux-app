@@ -26,6 +26,7 @@ function LoginForm() {
     //Acceso al estado global con useContext, revisar el Store.jsx para entender esta parte
     const [globalState, setGlobalState] = useContext(GlobalState)
     // No me queda muy claro si me sirve de algo el estado global si lo puedo guardar en localStorage
+    // eslint-disable-next-line no-unused-vars
     const [state, setState] = useLocalStorage('globalState', globalState)
 
     useEffect(() => {
@@ -66,6 +67,31 @@ function LoginForm() {
         }
 
         let res = await fetch(url, options).then(res => res.json()).then(response => response).catch(e => console.log(e))
+        console.log('res', res)
+
+        // Si el backend no esta encendido
+        if (res === undefined) {
+            toast({
+                title: 'Server error 😵',
+                description: 'Backend isn`t connected',
+                status: 'error',
+                isClosable: true
+            })
+            return
+        }
+
+        // Si tiene mal sus credenciales
+        if (!res.success) {
+            toast({
+                title: 'Check your credentials',
+                description: res.message,
+                status: 'error',
+                isClosable: true
+            })
+            return
+        }
+
+        // Si no hay nada mal, seguimos con el procedimiento
         const user = {
             ...res.user
         }
@@ -83,29 +109,23 @@ function LoginForm() {
 
         // ese array lo tengo que destructurar y guardarlo aca
         let boardsObj = {}
+        let boardsArr = []
 
-        for (let i = 0; i < boardsDB.length; i++) {
-            let item = boardsDB[i];
-            boardsObj[item.id] = {
-                "id": item.id,
-                "title": item.title,
-                "username": item.username,
-                "date": item.createdAt
-            };
-        }
+        if (boardsDB) {
+            console.log('entre')
 
-        // y poner solo los ids aca
-        let boardsArr = boardsDB.map(board => board.id)
+            for (let i = 0; i < boardsDB.length; i++) {
+                let item = boardsDB[i];
+                boardsObj[item.id] = {
+                    "id": item.id,
+                    "title": item.title,
+                    "username": item.username,
+                    "date": item.createdAt
+                };
+            }
 
-        if (!res.success) {
-            //notificar que algo esta mal
-            toast({
-                title: 'Check your credentials',
-                description: res.message,
-                status: 'error',
-                isClosable: true
-            })
-            return
+            // y poner solo los ids aca
+            boardsArr = boardsDB.map(board => board.id)
         }
 
         console.log('user', user)
@@ -147,7 +167,7 @@ function LoginForm() {
         //redirigir al dashboard y decirle que todo bien
         setTimeout(() => {
             window.location.href = '/dashboard'
-        }, 5000)
+        }, 3000)
     }
 
     let validInput = input => input === ''

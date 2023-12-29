@@ -11,10 +11,10 @@ function Homepage() {
             // gap={1}
             minHeight="100vh" // Set minHeight for the whole grid to fill the entire viewport height
         >
-            <GridItem bg="brand.700" gridArea="header" display={'flex'} >
+            <GridItem bg="brand.700" gridArea="header">
                 <Navbar />
             </GridItem>
-            <GridItem bg="brand.900" gridArea="main" minHeight="0">
+            <GridItem bg="brand.900" gridArea="main">
                 <TechSection />
             </GridItem>
         </Grid>

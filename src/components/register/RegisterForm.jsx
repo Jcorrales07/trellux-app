@@ -9,13 +9,18 @@ import {
     InputRightElement,
     useToast,
 } from '@chakra-ui/react'
-import {useState} from "react";
+import {useContext, useState} from "react";
 import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
+import {GlobalState} from "../../Store.jsx";
+import {useLocalStorage} from "../../hooks/useLocalStorage.jsx";
 
 function RegisterForm() {
+    const [globalState, setGlobalState] = useContext(GlobalState)
+    const [state, setState] = useLocalStorage('globalState', globalState)
+
     const [name, setName] = useState('')
-    const [lastname, setLastname] = useState('')
     const [email, setEmail] = useState('')
+    const [lastname, setLastname] = useState('')
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
     const [conPassword, setConPassword] = useState('')
@@ -33,7 +38,6 @@ function RegisterForm() {
     const handleConPassword = e => setConPassword(e.target.value)
 
     const getData = () => {
-
         return {
             name,
             lastname,
@@ -44,7 +48,6 @@ function RegisterForm() {
     }
 
     const confirmPassword = () => conPassword.includes(password)
-
 
     const registerAccount = async (e) => {
         e.preventDefault()
@@ -61,6 +64,8 @@ function RegisterForm() {
         if (confirmPassword()) {
             let res = await fetch(url, options).then(res => res.json()).then(response => response)
 
+            console.log('res', res)
+
             if (!res.success) {
                 //notificar que algo esta mal
                 toast({
@@ -72,13 +77,54 @@ function RegisterForm() {
                 return
             }
 
+            let urlLogin = 'http://localhost:7777/v1/users/login'
+            let optionsLogin = {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    username: username,
+                    password: password
+                })
+            }
+
+            let resLogin = await fetch(urlLogin, optionsLogin).then(res => res.json()).then(response => response).catch(e => console.log(e))
+            console.log('res', resLogin)
+
+            const user = {
+                ...resLogin.user
+            }
+
+            console.log(user)
+
+            // poner la informacion del usuario recien ingresado en el estado global
+            const newGlobalState = {
+                ...globalState,
+                userLogged: {
+                    name: user.name,
+                    lastname: user.lastname,
+                    username: user.username,
+                    email: user.email,
+                    accessToken: user.accessToken,
+                    boardsOrder: [],
+                },
+            }
+
+            console.log(newGlobalState)
+            // Ponemos al usuario en el estado global
+            setGlobalState(newGlobalState)
+            setState(globalState)
+
+            // notificar que se registro, mandarlo al dashboard
             toast({
                 title: 'Your account has been registered!',
                 description: res.message,
                 status: 'success',
                 isClosable: true
             })
-            // notificar que se registro, mandarlo al dashboard
+
+            location.href = '/dashboard'
         }
     }
 
