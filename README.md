@@ -18,3 +18,6 @@ Si usando el metodo POST, tenes que usar el JSON.stringify() para enviar bien la
 
 Me doy cuenta que, al dibujar y escribir lo que queres hacer, se vuelve posible. No importa que tan dificil se vea. \
 Materializas la idea. ⭐
+
+Si vas a hacer cambios en el modelo de alguna colleccion de mongo, asegurante que todo salga bien en el codigo \
+y para que se hagan los cambios, tenes que reiniciar el backend para que mongo haga las modificaciones necesarias

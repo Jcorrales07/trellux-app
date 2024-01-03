@@ -75,7 +75,7 @@ function CreateBoardModalForm({stateFunc}) {
                         title: inputValue,
                         date: new Date().toISOString(),
                         username: userCreator.username,
-                        tasks: {nombre: "JOe"},
+                        tasks: {},
                     }
 
                     // Aca actualizo el globalState, ya con el board creado, sin perder la otra informacion
