@@ -4,7 +4,6 @@ import {useContext} from "react";
 import {GlobalState} from "../Store.jsx";
 import {useLocalStorage} from "../hooks/useLocalStorage.jsx";
 
-
 function DashboardPage() {
     // eslint-disable-next-line no-unused-vars
     const [globalState, setGlobalState] = useContext(GlobalState)

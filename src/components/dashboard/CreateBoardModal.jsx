@@ -71,10 +71,11 @@ function CreateBoardModalForm({stateFunc}) {
                     let id = userCreator.username.slice(0, 3) + "-" + Math.round(Math.random() * 100000000)
                     const newBoard = {
                         id: id,
+                        bgUrl: 'www.photo.com',
                         title: inputValue,
+                        date: new Date().toISOString(),
                         username: userCreator.username,
-                        bgImg: '',
-                        date: new Date().toISOString()
+                        tasks: {nombre: "JOe"},
                     }
 
                     // Aca actualizo el globalState, ya con el board creado, sin perder la otra informacion
@@ -101,9 +102,7 @@ function CreateBoardModalForm({stateFunc}) {
                     setState(newGlobalState)
 
                     // lo mando a la db
-                    sendToDb(newBoard).then(r => r)
-
-
+                    sendToDb(newBoard).then(r => console.log(r))
                     // ======================================================
 
                     // Notificar si all good
@@ -134,7 +133,7 @@ function CreateBoardModalForm({stateFunc}) {
 function DefaultModal({stateFunc}) {
     return (
         <Flex py={5} onClick={() => stateFunc(prev => !prev)}>
-            <Heading as={'h4'} size={'md'}>Create New Board...</Heading>
+            <Heading as='h4' size={'md'}>Create New Board...</Heading>
         </Flex>
     )
 }

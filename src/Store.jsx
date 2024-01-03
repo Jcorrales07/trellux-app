@@ -11,6 +11,7 @@ const defaultState = {
         boardsOrder: [],
     },
     userBoards: {
+        tasks: {},
         boards: {},
         boardsOrder: [],
         boardSelected: {},

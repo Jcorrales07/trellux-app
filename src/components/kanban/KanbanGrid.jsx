@@ -1,7 +1,7 @@
-import {Box, Flex, Input, Text} from "@chakra-ui/react";
-import {AddIcon, DragHandleIcon} from "@chakra-ui/icons";
-import {useState} from "react";
+import {Flex, Text} from "@chakra-ui/react";
+import {AddIcon} from "@chakra-ui/icons";
 import KanbanColumn from "./KanbanColumn.jsx";
+import {DragDropContext, Droppable} from "react-beautiful-dnd";
 
 
 let cards = [
@@ -28,11 +28,18 @@ let cards = [
 ]
 
 let columns = [
-    'Column 1',
-    'Column 2',
-    'Column 3',
-    'Column 4',
-    'Column 5',
+    {
+        id: 1,
+        title: 'KanbanColumn #'
+    },
+    {
+        id: 2,
+        title: 'KanbanColumn #'
+    },
+    {
+        id: 3,
+        title: 'KanbanColumn #'
+    }
 ]
 
 function KanbanGrid() {
@@ -40,33 +47,51 @@ function KanbanGrid() {
 
     // Drag & Drop Context
     return (
-        <Flex overflowX="auto" maxW="100vw" p={5} bg={'brand.900'} minH={'87vh'} gap={5}>
+        <DragDropContext onDragEnd={handleDragEnd}>
+            <Flex overflowX="auto" maxW="100vw" p={5} bg={'brand.900'} minH={'87vh'} gap={5}>
 
-            {/* Contenedor de las columnas */}
-            {/* Droppable zone */}
-            <Flex gap={5}>
-                {columns.map((columnTitle, i) => (
-                    <KanbanColumn key={i} cards={cards} columnTitle={columnTitle}/>
-                ))}
-            </Flex>
+                {/* Contenedor de las columnas */}
+                {/* Droppable zone */}
+                <Droppable droppableId='all-columns'
+                           direction='horizontal'
+                           type='column'
+                >
+                    {(provided) => (
+                        <Flex gap={5}
+                              {...provided.droppableProps}
+                              ref={provided.innerRef}
+                        >
+                            {columns.map((column, i) => (
+                                <KanbanColumn key={i} cards={cards} column={column} index={i}/>
+                            ))}
 
-            <Flex bg='brand.800'
-                  height={'fit-content'}
-                  minWidth={'fit-content'}
-                  maxWidth={'350px'}
-                  borderRadius={12}
-                  p={[5, 3]}
-                  color={'white'}
-                  cursor={'pointer'}
-                  justifyContent={'center'}
-                  alignItems={'center'}
-                  gap={2}
-            >
-                <AddIcon boxSize={3} mt={0.5}/>
-                <Text>Create new board</Text>
+                            {provided.placeholder}
+                        </Flex>
+                    )}
+                </Droppable>
+
+                <Flex bg='brand.800'
+                      height={'fit-content'}
+                      minWidth={'fit-content'}
+                      maxWidth={'350px'}
+                      borderRadius={12}
+                      p={[5, 3]}
+                      color={'white'}
+                      cursor={'pointer'}
+                      justifyContent={'center'}
+                      alignItems={'center'}
+                      gap={2}
+                >
+                    <AddIcon boxSize={3} mt={0.5}/>
+                    <Text>Create new column</Text>
+                </Flex>
             </Flex>
-        </Flex>
+        </DragDropContext>
     );
+}
+
+function handleDragEnd() {
+
 }
 
 export default KanbanGrid;

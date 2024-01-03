@@ -16,6 +16,7 @@ import {useLocalStorage} from "../../hooks/useLocalStorage.jsx";
 
 function RegisterForm() {
     const [globalState, setGlobalState] = useContext(GlobalState)
+    // eslint-disable-next-line no-unused-vars
     const [state, setState] = useLocalStorage('globalState', globalState)
 
     const [name, setName] = useState('')
