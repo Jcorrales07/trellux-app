@@ -1,17 +1,23 @@
 import {Box, Button, Flex, Input} from "@chakra-ui/react";
 import {DragHandleIcon} from "@chakra-ui/icons";
 import PropTypes from "prop-types";
-import {useState} from "react";
+import {useContext, useState} from "react";
 import KanbanCard from "./KanbanCard.jsx";
 import {Draggable, Droppable} from "react-beautiful-dnd";
+import {GlobalState} from "../../Store.jsx";
+import {useLocalStorage} from "../../hooks/useLocalStorage.jsx";
 
 function KanbanColumn({cards, column, index}) {
-    const [title, setTitle] = useState(column.title + column.id)
+    const [title, setTitle] = useState(column.title)
+    const [globalState, setGlobalState] = useContext(GlobalState)
+    const [state, setState] = useLocalStorage('globalState')
+
+    const tasks = state.kanbanData.tasks
 
     // HTML: Columna
     // Draggable item
     return (
-        <Draggable draggableId={title} index={index}>
+        <Draggable draggableId={column.columnId} index={index}>
             {(provided) => (
                 <Flex bg='brand.800'
                       flexDirection={'column'}
@@ -38,16 +44,18 @@ function KanbanColumn({cards, column, index}) {
                     </Flex>
 
                     {/* Droppable zone */}
-                    <Droppable droppableId={title} type={'task'}>
+                    <Droppable droppableId={column.columnId} type={'task'}>
                         {(provided) => (
                             <Flex flexDirection='column'
+                                  minHeight={'55px'}
                                   ref={provided.innerRef}
                                   {...provided.droppableProps}
                             >
-                                {cards.map((card, i) => (
+                                {cards.map((taskId, i) => {
+                                    const task = tasks[taskId]
                                     // HTML: Tarjeta
-                                    <KanbanCard key={i} card={card} i={i} length={cards.length}/>
-                                ))}
+                                    return <KanbanCard key={i} card={task} i={i} length={cards.length}/>
+                                })}
                                 {provided.placeholder}
                             </Flex>
                         )}

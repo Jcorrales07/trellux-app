@@ -11,6 +11,73 @@ function BoardCard({id, index, title, date}) {
     const [globalState, setGlobalState] = useContext(GlobalState)
     const [state, setState] = useLocalStorage('globalState')
 
+    async function getKanbanData(id) {
+        const urlK = `http://localhost:7777/v1/kanbans/${id}`
+        const urlC = `http://localhost:7777/v1/columns/${id}`
+        const urlT = `http://localhost:7777/v1/tasks/${id}`
+
+        const options = {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        }
+
+        let kanban = await fetch(urlK, options).then(res => res.json()).then(response => response.columnOrder).catch(e => console.log(e))
+        let columns = await fetch(urlC, options).then(res => res.json()).then(response => response.column).catch(e => console.log(e))
+        let tasks = await fetch(urlT, options).then(res => res.json()).then(response => response).catch(e => console.log(e))
+
+        console.log('kaban db', kanban)
+        console.log('columns db', columns)
+        console.log('tasks db', tasks)
+
+
+        let fetchedColumns = {}
+        let fetchedTasks = {}
+
+        for (let i = 0; i < columns.length; i++) {
+            let item = columns[i];
+            fetchedColumns[item.columnId] = {
+                "columnId": item.columnId,
+                "title": item.title,
+                "tasksIds": item.tasksIds,
+                "username": item.username,
+                "kanbanId": item.kanbanId,
+            };
+        }
+
+        for (let i = 0; i < tasks.length; i++) {
+            let item = tasks[i];
+            fetchedTasks[item.taskId] = {
+                "taskId": item.taskId,
+                "content": item.content,
+                "kanbanId": item.kanbanId,
+                "username": item.username,
+            };
+        }
+
+        console.log(fetchedTasks, fetchedColumns)
+
+        const newGlobalState = {
+            ...globalState,
+            kanbanData: {
+                ...globalState.kanbanData,
+                columnOrder: kanban,
+                columns: {
+                    ...fetchedColumns,
+                },
+                tasks: {
+                    ...fetchedTasks,
+                }
+            }
+        }
+
+        console.log(newGlobalState)
+
+        setState(newGlobalState)
+        setGlobalState(newGlobalState)
+    }
+
     // Draggable items
     return (
         <Flex key={id}
@@ -22,6 +89,7 @@ function BoardCard({id, index, title, date}) {
                   setGlobalState(state)
               }}
               onClick={() => {
+                  getKanbanData(id).then(r => r)
 
                   // Pongo la informacion en el selectedBoard
                   const newGlobalState = {

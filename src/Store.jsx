@@ -11,10 +11,14 @@ const defaultState = {
         boardsOrder: [],
     },
     userBoards: {
-        tasks: {},
         boards: {},
         boardsOrder: [],
         boardSelected: {},
+    },
+    kanbanData: {
+        tasks: {},
+        columns: {},
+        columnOrder: []
     }
 }
 

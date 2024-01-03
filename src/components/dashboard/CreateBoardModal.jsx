@@ -4,6 +4,7 @@ import {useContext, useState} from "react";
 import {useToast} from "@chakra-ui/react";
 import {GlobalState} from "../../Store.jsx";
 import {useLocalStorage} from "../../hooks/useLocalStorage.jsx";
+import {v4 as uuidv4} from 'uuid';
 
 function CreateBoardModal() {
     const [showModal, setShowModal] = useState(false)
@@ -16,17 +17,25 @@ function CreateBoardModal() {
     );
 }
 
-const sendToDb = async (board) => {
-    let url = 'http://localhost:7777/v1/boards/'
+// Mejorar esta funcion
+const sendToDb = async (item, type, url) => {
     let options = {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
-        body: JSON.stringify(board)
+        body: JSON.stringify(item)
     }
 
-    return await fetch(url, options).then(res => res.json()).then(response => response).catch(e => console.log(e))
+    if (type === 'kanban') {
+        return await fetch(url, options).then(res => res.json()).then(response => console.log(response)).catch(e => console.log(e))
+    } else if (type === 'board') {
+        return await fetch(url, options).then(res => res.json()).then(response => console.log(response)).catch(e => console.log(e))
+    } else if (type === 'column') {
+        return await fetch(url, options).then(res => res.json()).then(response => console.log(response)).catch(e => console.log(e))
+    } else if (type === 'task') {
+        return await fetch(url, options).then(res => res.json()).then(response => console.log(response)).catch(e => console.log(e))
+    }
 }
 
 function CreateBoardModalForm({stateFunc}) {
@@ -34,8 +43,6 @@ function CreateBoardModalForm({stateFunc}) {
     const [globalState, setGlobalState] = useContext(GlobalState)
     // me traigo el estado desde localStorage
     const [state, setState] = useLocalStorage('globalState', globalState)
-
-    //console.log('estado desde CBM antes', 'localStorage', state, 'globalState', globalState)
 
     const [inputValue, setInputValue] = useState('')
     const toast = useToast()
@@ -55,7 +62,7 @@ function CreateBoardModalForm({stateFunc}) {
                 <Button onClick={() => {
                     // Creacion de un board ================================
 
-                    // Si el titulo esta vacio
+                    // Si el título esta vacio
                     if (inputValue === '') {
                         toast({
                             title: 'Empty Title',
@@ -75,8 +82,74 @@ function CreateBoardModalForm({stateFunc}) {
                         title: inputValue,
                         date: new Date().toISOString(),
                         username: userCreator.username,
-                        tasks: {},
                     }
+
+                    // de prueba
+                    const newTasks = [
+                        {
+                            kanbanId: id,
+                            taskId: `task-${userCreator.username.slice(0, 3)}-${uuidv4()}`,
+                            content: 'Take out the garbage',
+                            username: userCreator.username,
+                        },
+                        {
+                            kanbanId: id,
+                            taskId: `task-${userCreator.username.slice(0, 3)}-${uuidv4()}`,
+                            content: 'Watch my favorite show',
+                            username: userCreator.username,
+                        },
+                        {
+                            kanbanId: id,
+                            taskId: `task-${userCreator.username.slice(0, 3)}-${uuidv4()}`,
+                            content: 'Charge my phone',
+                            username: userCreator.username,
+                        },
+                        {
+                            kanbanId: id,
+                            taskId: `task-${userCreator.username.slice(0, 3)}-${uuidv4()}`,
+                            content: 'Cook dinner',
+                            username: userCreator.username,
+                        }
+                    ]
+
+                    // de prueba
+                    const newColumns = [
+                        {
+                            kanbanId: id,
+                            columnId: `column-${userCreator.username.slice(0, 3)}-${uuidv4()}`,
+                            title: 'To do',
+                            // El orden de los task ids es importante
+                            tasksIds: [
+                                newTasks[0].taskId,
+                                newTasks[1].taskId,
+                                newTasks[2].taskId,
+                                newTasks[3].taskId,
+                            ],
+                            username: userCreator.username,
+                        },
+                        {
+                            kanbanId: id,
+                            columnId: `column-${userCreator.username.slice(0, 3)}-${uuidv4()}`,
+                            title: 'Doing',
+                            taskIds: [],
+                            username: userCreator.username,
+                        },
+                        {
+                            kanbanId: id,
+                            columnId: `column-${userCreator.username.slice(0, 3)}-${uuidv4()}`,
+                            title: 'Done',
+                            taskIds: [],
+                            username: userCreator.username,
+                        }
+                    ]
+
+                    // default kanban. has 3 columns
+                    const newKanban = {
+                        kanbanId: id,
+                        username: userCreator.username,
+                        columnOrder: [newColumns[0].columnId, newColumns[1].columnId, newColumns[2].columnId],
+                    }
+                    // ----------------
 
                     // Aca actualizo el globalState, ya con el board creado, sin perder la otra informacion
                     const newGlobalState = {
@@ -94,7 +167,7 @@ function CreateBoardModalForm({stateFunc}) {
                                 }
                             },
                             boardsOrder: [...state.userBoards.boardsOrder, newBoard.id]
-                        }
+                        },
                     }
 
                     // actualizo el estado global y lo persisto
@@ -102,7 +175,10 @@ function CreateBoardModalForm({stateFunc}) {
                     setState(newGlobalState)
 
                     // lo mando a la db
-                    sendToDb(newBoard).then(r => console.log(r))
+                    sendToDb(newBoard, 'board', 'http://localhost:7777/v1/boards/').then(r => r)
+                    sendToDb(newKanban, 'kanban', 'http://localhost:7777/v1/kanbans/').then(r => r)
+                    sendToDb(newColumns, 'column', 'http://localhost:7777/v1/columns/multiple').then(r => r)
+                    sendToDb(newTasks, 'task', 'http://localhost:7777/v1/tasks/multiple').then(r => r)
                     // ======================================================
 
                     // Notificar si all good

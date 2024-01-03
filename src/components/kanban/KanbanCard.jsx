@@ -4,19 +4,19 @@ import {useState} from "react";
 import {Draggable} from "react-beautiful-dnd";
 
 function KanbanCard({card, i, length}) {
-    const [title, setTitle] = useState(card.content + card.id)
+    const [title, setTitle] = useState(card.content)
     const [showInput, setShowInput] = useState(false)
 
     // Draggable item
     return (
-        <Draggable draggableId={title} index={i}>
+        <Draggable draggableId={card.taskId} index={i}>
             {(provided) => (
                 <Box border={'2px solid gray'}
                      borderRadius={6}
                      h={'fit-content'}
                      w={'100%'}
                      mb={(i === length - 1) ? 0 : 2} // Si es el último elemento, que no le ponga margen
-                     key={card.id}
+                     key={card.taskId}
                      cursor={'grab'}
                      ref={provided.innerRef}
                      {...provided.draggableProps}
@@ -29,7 +29,7 @@ function KanbanCard({card, i, length}) {
                            type={'text'} value={title} display={showInput ? 'block' : 'none'}/>
                     <Box py={2} px={4} display={showInput ? 'none' : 'block'} onClick={() => {
                         setShowInput(prev => !prev)
-                    }}>{card.content + card.id}</Box>
+                    }}>{card.content}</Box>
                 </Box>
             )}
         </Draggable>
