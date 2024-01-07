@@ -73,7 +73,7 @@ function BoardCard({id, index, title, date}) {
             }
         }
 
-        console.log('newGlobalState', newGlobalState)
+        //console.log('newGlobalState', newGlobalState)
 
         // Hay un problema. El estado no se actualiza hasta el segundo click
         // Eso esta mal porque la informacion no aparece y hace sentir que no sirve la app.
@@ -90,18 +90,14 @@ function BoardCard({id, index, title, date}) {
               height={{base: '180px', xl: '250px', md: '180px'}}
               borderRadius={'10px'}
               p={3}
-              onLoad={() => {
-                  setGlobalState(state)
-              }}
+              onLoad={() => { setGlobalState(state) }}
               onClick={() => {
                   // consigo la info desde la db
                   getKanbanData(id).then(r => r)
 
                   // tengo que redirigirme con React router, por ahora me quedo asi
                   // el timeout me ayuda a darle tiempo a que se hagan bien los cambios
-                  setTimeout(() => {
-                      location.href = `kanban/${id}`
-                  }, 500)
+                  setTimeout(() => { location.href = `kanban/${id}`}, 500)
               }}
               boxShadow={'lg'}
               bgGradient={[

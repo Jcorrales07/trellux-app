@@ -12,6 +12,7 @@ function DashboardPage() {
 
     return (
         <Grid
+            // layout
             templateAreas={{
                 base: `"navbar navbar"
                   "sidebar sidebar"
@@ -27,9 +28,7 @@ function DashboardPage() {
 
             // Cuando este componente se renderice, ocupo que el estado se establezca
             // con la info del usuario que aca de entrar
-            onLoad={() => {
-                setGlobalState(state)
-            }}
+            onLoad={() => { setGlobalState(state) }}
         >
             <GridItem bg={'brand.500'} area={'navbar'} display={'flex'} alignItems={'center'}>
                 <Navbar/>

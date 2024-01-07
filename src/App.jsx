@@ -20,7 +20,8 @@ function App() {
         console.groupEnd()
 
         setGlobalState(state)
-    }, [globalState, state, setGlobalState])
+        setState(state) // Se persistiran los cambios automaticamente?
+    }, [globalState, state, setGlobalState, setState])
 
     // Kanban State para manejar el estado
     const [kanbanState, setKanbanState] = useState(state.kanbanData)

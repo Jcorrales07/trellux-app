@@ -1,10 +1,9 @@
 import {format} from 'date-fns'
 import {useContext} from "react";
 import BoardCard from "./BoardCard.jsx";
+
 import {SimpleGrid} from '@chakra-ui/react'
 import {GlobalState} from "../../Store.jsx";
-
-// import {DragDropContext, Droppable} from "react-beautiful-dnd";
 
 function BoardGrid() {
     // el estado se actualiza en CreateBoardModalForm y como es global, los cambios se hacen aca tambien
