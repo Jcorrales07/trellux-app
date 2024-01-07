@@ -11,9 +11,9 @@ function BoardGrid() {
     // eslint-disable-next-line no-unused-vars
     const [globalState, setGlobalState] = useContext(GlobalState)
     const boardsOdr = globalState.userLogged.boardsOrder
-    const boards = globalState.userBoards.boards
+    // const boards = globalState.userBoards.boards
 
-    console.log(boardsOdr, boards)
+    // console.log(boardsOdr, boards)
 
     return (
         // QUEDA PENDIENTE EL DRAG N DROP

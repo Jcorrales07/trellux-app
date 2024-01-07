@@ -1,89 +1,90 @@
-import {Flex, Text, useToast} from "@chakra-ui/react";
+import {Flex, Text} from "@chakra-ui/react";
 import {AddIcon} from "@chakra-ui/icons";
 import KanbanColumn from "./KanbanColumn.jsx";
-import {DragDropContext, Droppable} from "react-beautiful-dnd";
+import {Droppable} from "react-beautiful-dnd";
 import {useLocalStorage} from "../../hooks/useLocalStorage.jsx";
-import {useContext} from "react";
+import {useContext, useEffect, useState} from "react";
 import {GlobalState} from "../../Store.jsx";
 
 function KanbanGrid() {
+    // eslint-disable-next-line no-unused-vars
     const [globalState, setGlobalState] = useContext(GlobalState)
-    const [state, setState] = useLocalStorage('globalState')
-    // El estado de cada elemento se maneja desde su componente, asi no se comparte
+    // eslint-disable-next-line no-unused-vars
+    const [state, setState] = useLocalStorage('globalState', globalState)
+    const [kanbanState, setKanbanState] = useState(state.kanbanData)
 
-    const columnOrder = state.kanbanData.columnOrder
-    const tasks = state.kanbanData.tasks
-    const columns = state.kanbanData.columns
+    // Como puedo escuchar los cambios de state para que me los renderice aca???
 
-    console.log(columnOrder, tasks, columns)
 
-    console.log('estado global desde kanban grid', state)
+    // QUE ESTOY HACIENDO MALLLL??????????????????????????????? AAAAGGGGGHHHHHHHHHHHHH
+    // Pero no me voy a rendir, si no te termino en esta semana. Voy a aprender mas y te voy a terminar Trellux.
+    // Si ocupo hacerlo por 4ta vez, lo voy a hacer
+
+
+    useEffect(() => {
+        console.log('kanban grid state', state)
+        // Ya tengo los cambios aca, en globalState, El useEffect me ayuda a que lo pueda tener en el Context
+        // Pero ahora como le hago para usarlo??? Si cambio la variable, se piede todo porque globalState es volatil
+        console.log('kanban grid global state', globalState) // si me trae la info actualizada
+        setKanbanState(globalState.kanbanData)
+    }, [state, globalState, setGlobalState, setState])
+
+    // para manejar el kanban mas facil
+
+    const columnOrder = kanbanState.columnOrder
+    const columns = kanbanState.columns
 
     // Drag & Drop Context
     return (
-        <DragDropContext onDragEnd={handleDragEnd}>
-            <Flex overflowX="auto" maxW="100vw" p={5} bg={'brand.900'} minH={'87vh'} gap={5}>
+        <Flex overflowX="auto" maxW="100vw" p={5} bg={'brand.900'} minH={'87vh'} gap={5}>
+            {/* Contenedor de las columnas */}
+            {/* Droppable zone */}
+            <Droppable droppableId='all-columns'
+                       direction='horizontal'
+                       type='column'
+            >
+                {(provided) => (
+                    <Flex {...provided.droppableProps}
+                          ref={provided.innerRef}
+                          gap={5}
+                    >
+                        {columnOrder.map((columnId, index) => {
+                                columnId = columnId.toString()
+                                let column = columns[columnId]
+                                let tasks = column.tasksIds.map(taskId => kanbanState.tasks[taskId])
+                                // console.log(column, tasks)
 
-                {/* Contenedor de las columnas */}
-                {/* Droppable zone */}
-                <Droppable droppableId='all-columns'
-                           direction='horizontal'
-                           type='column'
-                >
-                    {(provided) => (
-                        <Flex gap={5}
-                              {...provided.droppableProps}
-                              ref={provided.innerRef}
-                        >
-                            {columnOrder.map((columnId, i) => {
-                                    let column = columns[columnId]
-                                    return <KanbanColumn key={i} cards={column.tasksIds} column={column} index={i}/>
-                                }
-                            )}
+                                return <KanbanColumn
+                                    key={index}
+                                    column={column}
+                                    tasks={tasks}
+                                    index={index}
+                                />
+                            }
+                        )}
 
-                            {provided.placeholder}
-                        </Flex>
-                    )}
-                </Droppable>
+                        {provided.placeholder}
+                    </Flex>
+                )}
+            </Droppable>
 
-                <Flex bg='brand.800'
-                      height={'fit-content'}
-                      minWidth={'fit-content'}
-                      maxWidth={'350px'}
-                      borderRadius={12}
-                      p={[5, 3]}
-                      color={'white'}
-                      cursor={'pointer'}
-                      justifyContent={'center'}
-                      alignItems={'center'}
-                      gap={2}
-                >
-                    <AddIcon boxSize={3} mt={0.5}/>
-                    <Text>Create new column</Text>
-                </Flex>
+            <Flex bg='brand.800'
+                  height={'fit-content'}
+                  minWidth={'fit-content'}
+                  maxWidth={'350px'}
+                  borderRadius={12}
+                  p={[5, 3]}
+                  color={'white'}
+                  cursor={'pointer'}
+                  justifyContent={'center'}
+                  alignItems={'center'}
+                  gap={2}
+            >
+                <AddIcon boxSize={3} mt={0.5}/>
+                <Text>Create new column</Text>
             </Flex>
-        </DragDropContext>
+        </Flex>
     );
-}
-
-// Esta funcion es la que maneja toda la logica que pasa cuando un evento pasa en el DragDropContext
-function handleDragEnd(result) {
-    const { destination, source, draggableId, type } = result
-    console.log(result)
-    // console.log('destino', destination, 'origen', source, 'elemento a insertar', draggableId)
-
-    // Si no hay destino, entonces no hacemos nada
-    if (!destination) {
-        return
-    }
-
-    // Si la modificacion paso en la misma lista pero tambien esta en el mismo indice, no hacemos nada
-    if (
-        destination.droppableId === source.droppableId &&
-        destination.index === source.index
-    ) {
-        return
-    }
 }
 
 export default KanbanGrid;

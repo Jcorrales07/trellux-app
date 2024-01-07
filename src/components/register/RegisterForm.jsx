@@ -9,7 +9,7 @@ import {
     InputRightElement,
     useToast,
 } from '@chakra-ui/react'
-import {useContext, useState} from "react";
+import {useContext, useEffect, useState} from "react";
 import {ViewIcon, ViewOffIcon} from "@chakra-ui/icons";
 import {GlobalState} from "../../Store.jsx";
 import {useLocalStorage} from "../../hooks/useLocalStorage.jsx";
@@ -18,6 +18,11 @@ function RegisterForm() {
     const [globalState, setGlobalState] = useContext(GlobalState)
     // eslint-disable-next-line no-unused-vars
     const [state, setState] = useLocalStorage('globalState', globalState)
+
+    useEffect(() => {
+        setState(globalState)
+    }, [globalState, setState]);
+
 
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
@@ -65,7 +70,7 @@ function RegisterForm() {
         if (confirmPassword()) {
             let res = await fetch(url, options).then(res => res.json()).then(response => response)
 
-            console.log('res', res)
+            //console.log('res', res)
 
             if (!res.success) {
                 //notificar que algo esta mal
@@ -112,7 +117,7 @@ function RegisterForm() {
                 },
             }
 
-            console.log(newGlobalState)
+            //console.log(newGlobalState)
             // Ponemos al usuario en el estado global
             setGlobalState(newGlobalState)
             setState(globalState)
@@ -125,7 +130,9 @@ function RegisterForm() {
                 isClosable: true
             })
 
-            location.href = '/dashboard'
+            setTimeout(() => {
+                location.href = '/dashboard'
+            }, 500)
         }
     }
 

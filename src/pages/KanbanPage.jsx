@@ -24,7 +24,6 @@ function KanbanPage() {
                          "kanbanGrid kanbanGrid"`}
               h={'100vh'}
               gridTemplateRows={{base: `65px 55px`, sm: '65px 55px'}}
-            // gridTemplateColumns={{md: '300px auto', sm: '250px auto'}}
         >
             <GridItem bg={'brand.500'} area={'navbar'} display={'flex'} alignItems={'center'}>
                 <Navbar/>

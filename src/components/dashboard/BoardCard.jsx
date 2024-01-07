@@ -4,8 +4,6 @@ import {DragHandleIcon} from "@chakra-ui/icons";
 import {useLocalStorage} from "../../hooks/useLocalStorage.jsx";
 import {useContext} from "react";
 import {GlobalState} from "../../Store.jsx";
-// import {Draggable} from "react-beautiful-dnd";
-// import {draggableDots} from "../../assets/icons/index.js";
 
 function BoardCard({id, index, title, date}) {
     const [globalState, setGlobalState] = useContext(GlobalState)
@@ -27,10 +25,9 @@ function BoardCard({id, index, title, date}) {
         let columns = await fetch(urlC, options).then(res => res.json()).then(response => response.column).catch(e => console.log(e))
         let tasks = await fetch(urlT, options).then(res => res.json()).then(response => response).catch(e => console.log(e))
 
-        console.log('kaban db', kanban)
-        console.log('columns db', columns)
-        console.log('tasks db', tasks)
-
+        // console.log('kaban db', kanban)
+        // console.log('columns db', columns)
+        // console.log('tasks db', tasks)
 
         let fetchedColumns = {}
         let fetchedTasks = {}
@@ -56,9 +53,9 @@ function BoardCard({id, index, title, date}) {
             };
         }
 
-        console.log(fetchedTasks, fetchedColumns)
+        // console.log(fetchedTasks, fetchedColumns)
 
-        const newGlobalState = {
+        let newGlobalState = {
             ...globalState,
             kanbanData: {
                 ...globalState.kanbanData,
@@ -69,13 +66,21 @@ function BoardCard({id, index, title, date}) {
                 tasks: {
                     ...fetchedTasks,
                 }
+            },
+            userBoards: {
+                ...globalState.userBoards,
+                boardSelected: globalState.userBoards.boards[id]
             }
         }
 
-        console.log(newGlobalState)
+        console.log('newGlobalState', newGlobalState)
 
+        // Hay un problema. El estado no se actualiza hasta el segundo click
+        // Eso esta mal porque la informacion no aparece y hace sentir que no sirve la app.
         setState(newGlobalState)
         setGlobalState(newGlobalState)
+
+        // console.log('state', state, 'globalState', globalState)
     }
 
     // Draggable items
@@ -89,24 +94,14 @@ function BoardCard({id, index, title, date}) {
                   setGlobalState(state)
               }}
               onClick={() => {
+                  // consigo la info desde la db
                   getKanbanData(id).then(r => r)
 
-                  // Pongo la informacion en el selectedBoard
-                  const newGlobalState = {
-                      ...globalState,
-                      userBoards: {
-                          ...globalState.userBoards,
-                          boardSelected: globalState.userBoards.boards[id]
-                      }
-                  }
-
-                  //persisto el nuevo estado global
-                  setState(newGlobalState)
-                  // actualizo el estado global localmente
-                  setGlobalState(newGlobalState)
-
                   // tengo que redirigirme con React router, por ahora me quedo asi
-                  location.href = `kanban/${id}`
+                  // el timeout me ayuda a darle tiempo a que se hagan bien los cambios
+                  setTimeout(() => {
+                      location.href = `kanban/${id}`
+                  }, 500)
               }}
               boxShadow={'lg'}
               bgGradient={[
@@ -124,8 +119,6 @@ function BoardCard({id, index, title, date}) {
                     <Heading as='h4' size={'md'} textShadow={'2px 3px 8px #000'}
                              color={'brand.300'}>{date || ''}</Heading>
                 </Flex>
-                {/*<DragHandleIcon color={'white'} w={6} h={6} mt={2}*/}
-                {/*                cursor={'grab'} {...provided.dragHandleProps}/>*/}
                 <Box h='min-content'>
                     <DragHandleIcon color='white' w={6} h={7}/>
                 </Box>

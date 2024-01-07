@@ -25,12 +25,11 @@ import {useLocalStorage} from "../../hooks/useLocalStorage.jsx";
 function LoginForm() {
     //Acceso al estado global con useContext, revisar el Store.jsx para entender esta parte
     const [globalState, setGlobalState] = useContext(GlobalState)
-    // No me queda muy claro si me sirve de algo el estado global si lo puedo guardar en localStorage
     // eslint-disable-next-line no-unused-vars
     const [state, setState] = useLocalStorage('globalState', globalState)
 
+    // Si hay algun cambio en el globalState, estado Local, entonces que persista
     useEffect(() => {
-        console.log("globalState despues", globalState) // verificando el estado global
         setState(globalState)
     }, [globalState, setState])
 
@@ -67,7 +66,7 @@ function LoginForm() {
         }
 
         let res = await fetch(url, options).then(res => res.json()).then(response => response).catch(e => console.log(e))
-        console.log('res', res)
+        // console.log('res', res)
 
         // Si el backend no esta encendido
         if (res === undefined) {
@@ -105,15 +104,13 @@ function LoginForm() {
         }
 
         let boardsDB = (await fetch(urlBoards, optionsBoards).then(res => res.json()).then(response => response).catch(e => console.log(e))).boards
-        console.log(boardsDB)
+        //console.log(boardsDB)
 
         // ese array lo tengo que destructurar y guardarlo aca
         let boardsObj = {}
         let boardsArr = []
 
         if (boardsDB) {
-            console.log('entre')
-
             for (let i = 0; i < boardsDB.length; i++) {
                 let item = boardsDB[i];
                 boardsObj[item.id] = {
@@ -128,7 +125,7 @@ function LoginForm() {
             boardsArr = boardsDB.map(board => board.id)
         }
 
-        console.log('user', user)
+        // console.log('user', user)
         // console.log('globalState antes', globalState)
 
         const newGlobalState = {
@@ -153,7 +150,7 @@ function LoginForm() {
 
         // Ponemos al usuario en el estado global
         setGlobalState(newGlobalState)
-        setState(globalState)
+        setState(globalState) // en el useEffect puse esto tambien
 
         // console.log('setState(globalState)', globalState)
 
@@ -166,8 +163,8 @@ function LoginForm() {
 
         //redirigir al dashboard y decirle que todo bien
         setTimeout(() => {
-            window.location.href = '/dashboard'
-        }, 3000)
+            location.href = '/dashboard'
+        }, 1000)
     }
 
     let validInput = input => input === ''
